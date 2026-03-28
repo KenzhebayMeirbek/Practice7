@@ -5,7 +5,6 @@ from connect import get_connection, init_db
 
 
 def print_table(rows: list[tuple]) -> None:
-    """Pretty-print query results."""
     if not rows:
         print("  (no contacts found)")
         return
@@ -22,7 +21,6 @@ def print_table(rows: list[tuple]) -> None:
 
 
 def insert_from_csv(filepath: str) -> None:
-    """Read contacts from a CSV file and insert them (skip duplicates)."""
     inserted = skipped = 0
     with open(filepath, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -43,14 +41,13 @@ def insert_from_csv(filepath: str) -> None:
                         else:
                             skipped += 1
                     except Exception as e:
-                        print(f"  [!] Skipping row {row}: {e}")
+                        print(f"   Skipping row {row}: {e}")
             conn.commit()
     print(f"[CSV] Inserted {inserted}, skipped {skipped} duplicate(s).")
 
 
 
 def insert_from_console() -> None:
-    """Ask the user to enter a contact and insert it into the DB."""
     print("\n--- Add new contact ---")
     first_name = input("  First name : ").strip()
     last_name  = input("  Last name  : ").strip() or None
@@ -87,7 +84,6 @@ def get_all_contacts() -> list[tuple]:
 
 
 def search_by_name(name: str) -> list[tuple]:
-    """Return contacts whose first or last name contains the given string."""
     pattern = f"%{name}%"
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -104,7 +100,6 @@ def search_by_name(name: str) -> list[tuple]:
 
 
 def search_by_phone_prefix(prefix: str) -> list[tuple]:
-    """Return contacts whose phone starts with the given prefix."""
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -121,7 +116,6 @@ def search_by_phone_prefix(prefix: str) -> list[tuple]:
 
 
 def update_contact() -> None:
-    """Interactive update: find contact by current phone, then change name or phone."""
     print("\n--- Update contact ---")
     current_phone = input("  Enter current phone to find contact: ").strip()
 
@@ -179,7 +173,6 @@ def update_contact() -> None:
 
 
 def delete_contact() -> None:
-    """Interactive delete: by first name or phone number."""
     print("\n--- Delete contact ---")
     print("  1 — Delete by first name")
     print("  2 — Delete by phone number")
@@ -194,7 +187,7 @@ def delete_contact() -> None:
                 )
                 deleted = cur.rowcount
             conn.commit()
-        print(f"  [✓] Deleted {deleted} contact(s) with first name '{name}'.")
+        print(f"  Deleted {deleted} contact(s) with first name '{name}'.")
 
     elif choice == "2":
         phone = input("  Phone: ").strip()
@@ -205,10 +198,10 @@ def delete_contact() -> None:
                 )
                 deleted = cur.rowcount
             conn.commit()
-        print(f"  [✓] Deleted {deleted} contact(s) with phone '{phone}'.")
+        print(f"  Deleted {deleted} contact(s) with phone '{phone}'.")
 
     else:
-        print("  [!] Invalid choice.")
+        print("   Invalid choice.")
 
 
 
